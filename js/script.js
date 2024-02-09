@@ -1,41 +1,28 @@
-let playerSelection = prompt("rock, paper, or scissors?");
-let computerSelection = getComputerChoice();
-let errorCount = 0;
 
-playGame(playerSelection, computerSelection);
+const btns = document.querySelectorAll("button");
+const resultDisplay = document.querySelector("#resultDisplay");
 
-function playGame(playerSelection, computerSelection){
-    let gameCount = 1;
-    let playerWins = 0;
-    let computerWins = 0;
-    let isError = 0;
+let gameCount = 0;
+let playerWins = 0;
+let computerWins = 0;
 
-    while(gameCount <= 5){
-        switch(playRound(playerSelection, computerSelection)){
-            case "You Win!":
-                playerWins++;
-                break;
-
-            case "You Lose.":
-                computerWins++;
-                break;
-
-            case -1:
-                isError = -1;
-                break;
-        }
-
-        if(isError == -1) break;
-        if(gameCount >= 5) break;
-
-        computerSelection = getComputerChoice();
-        playerSelection = prompt("rock, paper, or scissors?");
+btns.forEach((button)=>{
+    button.addEventListener('click', ()=>{
+        resultDisplay.textContent = playRound(button.value, getComputerChoice());
+        checkWinner(resultDisplay.textContent);
         gameCount++;
-    }
+        if(gameCount == 5){
 
-    alert(`Score: Player ${playerWins} : Computer ${computerWins}`);
+            resultDisplay.textContent = `Player Wins: ${playerWins} | 
+            Computer Wins: ${computerWins}`;
 
-}
+            playerWins = 0;
+            computerWins = 0;
+            gameCount = 0;
+
+        };
+    });
+});
 
 function getComputerChoice(){
     let computerChoice;
@@ -63,8 +50,6 @@ function playRound(playerSelection, computerSelection){
 
     playerSelection = playerSelection.toLowerCase();
 
-    checkPlayerChoice(playerSelection);
-
     switch(computerSelection){
 
         case "error":
@@ -73,6 +58,12 @@ function playRound(playerSelection, computerSelection){
             statement = -1;
             return statement
 
+            break;
+
+        case playerSelection:
+            statement = "Its a Tie!";
+            return statement;
+    
             break;
 
         case "rock":
@@ -115,33 +106,19 @@ function playRound(playerSelection, computerSelection){
 
 }
 
-function checkPlayerChoice(playerSelection){
+function checkWinner(statement){
+    
+    switch(statement){
 
-    playerSelection = playerSelection.toLowerCase();
-
-    switch(playerSelection){
-        case "rock":
+        case "You Win!":
+            playerWins++;
             break;
-        case "paper":
-            break;
-        case "scissors":
-            break;
-        default:
 
-            if(errorCount >= 5){
-                alert("too many invalid inputs.");
-                break;
-            }
-            errorCount++;
+        case "You Lose.":
+            computerWins++;
+            break;
 
-            alert("invalid choice, try again.");
-            playerSelection = prompt("rock, paper, or scissors?", "error");
-            setPlayerSelection(playerSelection);
+        case "Its a Tie!":
             break;
     }
-}
-
-function setPlayerSelection(playerChoice){
-    playerSelection = playerChoice;
-    checkPlayerChoice(playerSelection);
 }
